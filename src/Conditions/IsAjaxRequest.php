@@ -26,15 +26,13 @@ namespace SFW2\Render\Conditions;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-final readonly class InvertCondition implements ConditionInterface
+final class IsAjaxRequest implements ConditionInterface
 {
-    public function __construct(
-        private ConditionInterface $condition,
-    ) {
-    }
-
     public function __invoke(Request $request, Response $response): bool
     {
-        return !$this->condition->__invoke($request, $response);
+        if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
+            return true;
+        }
+        return false;
     }
 }

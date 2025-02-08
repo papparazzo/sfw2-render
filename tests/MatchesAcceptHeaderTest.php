@@ -24,6 +24,7 @@ declare(strict_types=1);
 
 namespace SFW2\Render\Tests;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -32,18 +33,19 @@ use SFW2\Render\Conditions\MatchesAcceptHeader;
 
 class MatchesAcceptHeaderTest extends TestCase
 {
-    public static function dataProvider(): array
+    public static function invokeDataProvider(): array
     {
         return [
-            ['hallo', MatchesAcceptHeader::MEDIA_CSV, false],
-            ['text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', MatchesAcceptHeader::MEDIA_CSV, false],
- ['text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', MatchesAcceptHeader::MEDIA_TEXT, false],
-
+            ['text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', MatchesAcceptHeader::MEDIA_CSV, true],
+            ['text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8', MatchesAcceptHeader::MEDIA_TEXT, true],
+            ['text/html,application/xhtml+xml,application/xml;q=0.9', MatchesAcceptHeader::MEDIA_TEXT, false],
+            ['text/html,application/xhtml+xml,application/xml;q=0.9', MatchesAcceptHeader::MEDIA_XML, true],
+            ['text/html,application/xhtml+xml,application/xml;q=0.9', MatchesAcceptHeader::MEDIA_HTML, true],
         ];
     }
 
-    #[DataProvider('dataProvider')]
-    public function test__invoke(string $header, string $value, bool $expected): void
+    #[DataProvider('invokeDataProvider')]
+    public function testInvoke(string $header, string $value, bool $expected): void
     {
         $reqMock = $this->getMockBuilder(ServerRequestInterface::class)->getMock();
         $reqMock->method('getHeaderLine')->willReturn($header);
@@ -52,5 +54,22 @@ class MatchesAcceptHeaderTest extends TestCase
 
         $matcher = new MatchesAcceptHeader($value);
         $this::assertSame($expected, $matcher($reqMock, $resMock));
+    }
+
+    public static function exceptionDataProvider(): array
+    {
+        return [
+            ['hallo'],
+            [''],
+            ['/'],
+            ['abc/'],
+            ['/abc'],
+        ];
+    }
+
+    #[DataProvider('exceptionDataProvider')]
+    public function testException(string $header): void {
+        $this->expectException(InvalidArgumentException::class);
+        new MatchesAcceptHeader($header);
     }
 }

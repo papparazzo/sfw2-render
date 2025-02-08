@@ -14,13 +14,20 @@ final class RenderXml implements RenderInterface
     ) {
     }
 
+    /**
+     * @param  Request              $request
+     * @param  Response             $response
+     * @param  array<string, mixed> $data
+     * @param  string|null          $template
+     * @return Response
+     */
     public function render(Request $request, Response $response, array $data = [], ?string $template = null): Response
     {
         $data = $this->appendAttributes ? array_merge($request->getAttributes(), $data) : $data;
         $payload =
             '<?xml version="1.0" encoding="utf-8"?>' . PHP_EOL .
             '<div>' .
-            $this->handlebars->render($template, $data) .
+            $this->handlebars->render((string)$template, $data) .
             '</div>';
 
         $response->getBody()->write($payload);

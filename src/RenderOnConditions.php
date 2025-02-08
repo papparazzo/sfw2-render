@@ -20,6 +20,13 @@ class RenderOnConditions implements RenderInterface
         return $this;
     }
 
+    /**
+     * @param  Request              $request
+     * @param  Response             $response
+     * @param  array<string, mixed> $data
+     * @param  string|null          $template
+     * @return Response
+     */
     public function render(Request $request, Response $response, array $data = [], ?string $template = null): Response
     {
         foreach ($this->engines as $entry) {
