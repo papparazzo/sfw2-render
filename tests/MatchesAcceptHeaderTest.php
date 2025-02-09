@@ -41,6 +41,8 @@ class MatchesAcceptHeaderTest extends TestCase
             ['text/html,application/xhtml+xml,application/xml;q=0.9', MatchesAcceptHeader::MEDIA_TEXT, false],
             ['text/html,application/xhtml+xml,application/xml;q=0.9', MatchesAcceptHeader::MEDIA_XML, true],
             ['text/html,application/xhtml+xml,application/xml;q=0.9', MatchesAcceptHeader::MEDIA_HTML, true],
+            ['text/*', MatchesAcceptHeader::MEDIA_HTML, true],
+            ['abc', MatchesAcceptHeader::MEDIA_HTML, false],
         ];
     }
 
