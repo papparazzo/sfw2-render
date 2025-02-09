@@ -52,11 +52,12 @@ final class MatchesAcceptHeader implements ConditionInterface
             return true;
         }
 
-        $pos = strpos($accept, '/');
-        $res = substr($accept, 0, $pos);
-        $res = "$res/*";
+        /** @phpstan-ignore argument.type ($this->media is already checked in ctr, so strpos never returns 'false') */
+        $pos = strpos($this->media, '/');
+        $res = substr($this->media, 0, $pos);
+        $res = "$res/\*";
 
-        if (preg_match("#$this->media#", $res)) {
+        if (preg_match("#$res#", $accept)) {
             return true;
         }
 
