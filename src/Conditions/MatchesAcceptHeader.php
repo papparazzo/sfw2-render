@@ -52,8 +52,8 @@ final class MatchesAcceptHeader implements ConditionInterface
             return true;
         }
 
-        /** @phpstan-ignore argument.type ($this->media is already checked in ctr, so strpos never returns 'false') */
         $pos = strpos($this->media, '/');
+        /** @phpstan-ignore argument.type ($this->media is already checked in ctr, so strpos never returns 'false') */
         $res = substr($this->media, 0, $pos);
         $res = "$res/\*";
 
